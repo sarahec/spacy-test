@@ -56,23 +56,24 @@
               ijson
               jsonlines
               nltk
-              numpy
-              pip
-              pytorch
-              scipy
+              # numpy
+              # pip
+              pytest
+              # pytorch
+              # scipy
               spacy
               tabulate
-              tqdm
+              # tqdm
             ]));
             venv = {
               enable = true;
               quiet = true;
               # farm-haystack marked as broken in nixpkgs due to conflict w/ pydantic >= 2
               # It also needs to load a verion of transformers that is not in nixpkgs
-              requirements = ''
-                farm-haystack
-                transformers
-              '';
+              # requirements = ''
+              #   farm-haystack
+              #   transformers
+              # '';
             };
           };
 
