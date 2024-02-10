@@ -2,6 +2,5 @@
 .direnv
 .downloads
 
-data/
 outputs/
 *.pyc
