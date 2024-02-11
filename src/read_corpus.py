@@ -10,12 +10,14 @@ def read_techqa_corpus(inpf):
     if (extension == "jsonl"):
         with jsonlines.open(inpf, "r") as reader:
             for passage in reader:          # iteration avoids loading the entire file into memory
-                yield preprocess_single_doc(passage)
+                for snippet in preprocess_single_doc(passage):
+                    yield snippet
     else:
         with open(inpf, "r") as fr:
             # incremental json, avoids loading the entire file into memory
             for passage in ijson.items(fr):
-                yield preprocess_single_doc(passage)
+                for snippet in preprocess_single_doc(passage):
+                    yield snippet
 
 
 def preprocess_single_doc(passage):

@@ -68,12 +68,10 @@
             venv = {
               enable = true;
               quiet = true;
-              # farm-haystack marked as broken in nixpkgs due to conflict w/ pydantic >= 2
-              # It also needs to load a verion of transformers that is not in nixpkgs
-              # requirements = ''
-              #   farm-haystack
-              #   transformers
-              # '';
+              # Install the spacy pipeline locally
+              requirements = ''
+                https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl           
+              '';
             };
           };
 
