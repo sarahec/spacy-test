@@ -1,4 +1,5 @@
-from src.read_corpus import read_techqa_corpus
+from src.techqa.read_corpus import read_techqa_corpus
+
 
 def test_read_techqa_corpus():
     inpf = "data/corpus.jsonl"

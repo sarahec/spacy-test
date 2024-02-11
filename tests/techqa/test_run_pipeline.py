@@ -1,5 +1,5 @@
-from src.read_corpus import read_techqa_corpus
-from src.run_pipeline import run_pipeline
+from src.techqa.read_corpus import read_techqa_corpus
+from src.techqa.run_pipeline import run_pipeline
 
 
 def test_run_pipeline():

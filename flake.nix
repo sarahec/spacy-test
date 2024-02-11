@@ -1,5 +1,5 @@
 {
-  description = "Workspace for the HuggingFace NLP course";
+  description = "Workspace for experimenting with ML performance on NixOS";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -9,12 +9,14 @@
     nix2container.inputs.nixpkgs.follows = "nixpkgs";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
     nixpkgs-python.url = "github:cachix/nixpkgs-python";
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
   nixConfig = {
     extra-substituters = [
-      "https://devenv.cachix.org"
       "https://cuda-maintainers.cachix.org"
+      "https://devenv.cachix.org"
+      "https://nix-community.cachix.org"
     ];
 
     extra-trusted-public-keys = [
@@ -23,7 +25,7 @@
     ];
   };
 
-  outputs = inputs@{ flake-parts, nixpkgs, ... }:
+  outputs = inputs@{ flake-parts, nixpkgs, nix-vscode-extensions, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         inputs.devenv.flakeModule
@@ -70,6 +72,7 @@
               quiet = true;
               # Install the spacy pipeline locally
               requirements = ''
+                austin-dist
                 https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl           
               '';
             };
@@ -78,7 +81,6 @@
           services.elasticsearch.enable = true;
 
           packages = with pkgs; [
-            curl
             noti
             wget
           ];
