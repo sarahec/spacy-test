@@ -9,7 +9,6 @@
     nix2container.inputs.nixpkgs.follows = "nixpkgs";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
     nixpkgs-python.url = "github:cachix/nixpkgs-python";
-    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
   nixConfig = {
@@ -25,7 +24,7 @@
     ];
   };
 
-  outputs = inputs@{ flake-parts, nixpkgs, nix-vscode-extensions, ... }:
+  outputs = inputs@{ flake-parts, nixpkgs, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         inputs.devenv.flakeModule
@@ -37,7 +36,7 @@
         _module.args.pkgs = import nixpkgs {
           inherit system;
           config.allowUnfree = true;
-          config.allowBroken = true; # FIXME remove when farm-haystack is fixed
+          config.allowBroken = false;
         };
 
         devenv.shells.default = {
@@ -55,18 +54,14 @@
             enable = true;
             package = (pkgs.python3.withPackages (ps: with ps; with pkgs.python3Packages; [
               cupy
+              cython_3
               ijson
               jsonlines
-              nltk
-              # numpy
-              # pip
               pytest
-              # pytorch
-              # scipy
               spacy
-              tabulate
-              # tqdm
-            ]));
+              setuptools
+              tqdm
+            ])).override (args: { ignoreCollisions = true; }); # old cython and new cython_3 collide
             venv = {
               enable = true;
               quiet = true;
