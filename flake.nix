@@ -54,16 +54,6 @@
             };
             propagatedBuildInputs = [ ps.spacy ];
           };
-          spacy-en-core-web-trf = ps.buildPythonPackage rec {
-            pname = "en_core_web_trf";
-            version = "3.7.1";
-            src = fetchTarball {
-              url =
-                "https://github.com/explosion/spacy-models/releases/download/${pname}-${version}/${pname}-${version}.tar.gz";
-              sha256 = "sha256:1mgp4v8rg9rgzak19d7c0aa9xxia379w18ky1hq470is9kjpwphr";
-            };
-            propagatedBuildInputs = [ ps.spacy ];
-          };
         in
         {
           # This sets `pkgs` to a nixpkgs with allowUnfree option set.
@@ -91,7 +81,7 @@
 
             languages.python = {
               enable = true;
-              package = (pkgs.python311.withPackages (_: [
+              package = (pkgs.python311.withPackages (ps: [
                 ps.cupy
                 ps.cython_3
                 ps.ijson
@@ -102,7 +92,7 @@
                 ps.setuptools
                 ps.tqdm
                 spacy-en-core-web-sm
-                spacy-en-core-web-trf
+                ps.spacy-transformers
               ])).override
                 (args: { ignoreCollisions = true; }); # old cython and new cython_3 collide
               venv = {
