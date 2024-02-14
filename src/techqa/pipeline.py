@@ -7,24 +7,19 @@ import spacy
 nlp = spacy.load('en_core_web_sm')
 assert (nlp is not None)
 
-
 def read_techqa_corpus(inpf):
     '''A generator that reads the TechQA corpus and yields documents'''
     extension = inpf.split(".")[-1]
     assert (extension in ["jsonl", "json"])
     assert os.path.exists(inpf)
 
-    if (extension == "jsonl"):
-        with jsonlines.open(inpf, "r") as reader:
-            for passage in reader:          # iteration avoids loading the entire file into memory
-                for snippet in preprocess_single_doc(passage):
-                    yield snippet
-    else:
-        with open(inpf, "r") as fr:
-            # incremental json, avoids loading the entire file into memory
-            for passage in ijson.items(fr):
-                for snippet in preprocess_single_doc(passage):
-                    yield snippet
+    is_jsonl = True if extension == "jsonl" else False
+
+    with open(inpf, "rb") as fr:
+        # incremental json, avoids loading the entire file into memory
+        for passage in ijson.items(fr, '', multiple_values=is_jsonl):
+            for snippet in preprocess_single_doc(passage):
+                yield snippet
 
 
 def preprocess_single_doc(passage):
@@ -72,7 +67,7 @@ def main():
     count = 0
     corpus = read_techqa_corpus(inpf)
     assert corpus is not None
-    result = run_pipeline(corpus, batchSize=1024, nProcesses=2)
+    result = run_pipeline(corpus, batchSize=1024, nProcesses=4)
     for doc in result:
       if post_process_docs(doc) is not None:
         count = count + 1
