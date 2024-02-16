@@ -86,6 +86,7 @@
                 ps.cython_3
                 ps.ijson
                 ps.jsonlines
+                ps.orjson
                 ps.pip
                 ps.pytest
                 ps.spacy
