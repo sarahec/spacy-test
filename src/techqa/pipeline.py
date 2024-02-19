@@ -10,14 +10,12 @@ assert (nlp is not None)
 def read_techqa_corpus(inpf):
     '''A generator that reads the TechQA corpus and yields documents'''
     extension = inpf.split(".")[-1]
-    assert (extension in ["jsonl", "json"])
+    assert (extension == "jsonl")
     assert os.path.exists(inpf)
-
-    is_jsonl = True if extension == "jsonl" else False
 
     with open(inpf, "rb") as fr:
         # incremental json, avoids loading the entire file into memory
-        for passage in ijson.items(fr, '', multiple_values=is_jsonl):
+        for passage in jsonlines(fr, '', multiple_values=is_jsonl):
             for snippet in preprocess_single_doc(passage):
                 yield snippet
 
