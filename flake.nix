@@ -56,6 +56,7 @@
 
             pythonRelaxDeps = [
               "typer"
+              "thinc"
             ];
 
             nativeBuildInputs = [
@@ -86,11 +87,6 @@
               ps.wasabi
               ps.weasel
             ];
-
-            postPatch = ''
-              substituteInPlace setup.cfg \
-                --replace "thinc>=8.1.8,<8.2.0" "thinc>=8.1.8"
-            '';
           };
           spacy-en-core-web-sm = ps.buildPythonPackage rec {
             pname = "en_core_web_sm";
@@ -104,11 +100,11 @@
           };
           scalene = ps.buildPythonPackage rec {
             pname = "scalene";
-            version = "1.5.34";
+            version = "1.5.35";
             pyproject = true;
             src = ps.fetchPypi {
               inherit pname version;
-              sha256 = "sha256-1saKWht9RzTxIB3anlfzBusrkgWOxF0DSxIskCr264M";
+              sha256 = "3s0KN06RivCN4G5/LZf+r7GtAlKwqRuZwUtrY2T2Bew=";
             };
 
             nativeBuildInputs = [ ps.cython ps.setuptools-scm ps.pip ps.wheel ];
@@ -116,8 +112,11 @@
 
             postPatch = ''
               substituteInPlace setup.py \
-                --replace-fail "pynvml>=11.0.0,<11.5" "pynvml>=11.0.0"
+                --replace-fail "pynvml>=11.0.0,<11.5" "pynvml~=11.5.0"
+              substituteInPlace requirements.txt \
+                --replace-fail "pynvml~=11.0.0" "pynvml~=11.5.0"
             '';
+
 
           };
 
