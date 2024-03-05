@@ -6,3 +6,5 @@ outputs
 *.pyc
 __pycache_
 .pytest_cache
+
+profile.*
