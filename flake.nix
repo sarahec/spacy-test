@@ -16,8 +16,6 @@
   };
 
   nixConfig = {
-    max-jobs = 4;
-    num-cores = 12;
     extra-substituters = [
       "https://cuda-maintainers.cachix.org"
       "https://devenv.cachix.org"
@@ -44,50 +42,7 @@
       perSystem = { config, self', inputs', pkgs, system, ... }:
         let
           ps = pkgs.python311Packages;
-          spacy = ps.buildPythonPackage rec {
-            pname = "spacy";
-            version = "3.7.4";
-            pyproject = true;
 
-            src = ps.fetchPypi {
-              inherit pname version;
-              hash = "sha256-Ul8s7S5AdhViyMrOk+9qHm6MSD8nvVZLwbFfYI776Fs=";
-            };
-
-            pythonRelaxDeps = [
-              "typer"
-              "thinc"
-            ];
-
-            nativeBuildInputs = [
-              ps.pythonRelaxDepsHook
-            ];
-
-            propagatedBuildInputs = [
-              ps.blis
-              ps.catalogue
-              ps.cymem
-              ps.jinja2
-              ps.jsonschema
-              ps.langcodes
-              ps.murmurhash
-              ps.numpy
-              ps.packaging
-              ps.pathy
-              ps.preshed
-              ps.pydantic
-              ps.requests
-              ps.setuptools
-              ps.spacy-legacy
-              ps.spacy-loggers
-              ps.srsly
-              ps.thinc
-              ps.tqdm
-              ps.typer
-              ps.wasabi
-              ps.weasel
-            ];
-          };
           spacy-en-core-web-sm = ps.buildPythonPackage rec {
             pname = "en_core_web_sm";
             version = "3.7.1";
@@ -96,7 +51,7 @@
                 "https://github.com/explosion/spacy-models/releases/download/${pname}-${version}/${pname}-${version}.tar.gz";
               sha256 = "sha256:10mvc8masb60zsq8mraxc032xab83v4vg23lb3ff1dwbpf67w316";
             };
-            propagatedBuildInputs = [ spacy ];
+            buildInputs = [ ps.spacy ];
           };
           scalene = ps.buildPythonPackage rec {
             pname = "scalene";
@@ -112,43 +67,11 @@
 
             postPatch = ''
               substituteInPlace setup.py \
-                --replace-fail "pynvml>=11.0.0,<11.5" "pynvml~=11.5.0"
+                --replace-warn "pynvml>=11.0.0,<11.5" "pynvml~=11.5.0"
               substituteInPlace requirements.txt \
-                --replace-fail "pynvml~=11.0.0" "pynvml~=11.5.0"
+                --replace-warn "pynvml~=11.0.0" "pynvml~=11.5.0"
             '';
-
-
           };
-
-
-          #   curated-tokenizers = ps.buildPythonPackage rec {
-          #     pname = "curated-tokenizers";
-          #     version = "0.0.9";
-          #     src = fetchTarball {
-          #       url = "https://github.com/explosion/${pname}/archive/refs/tags/v${version}.tar.gz";
-          #       sha256 = "sha256:16qqz8nq3fhsvx6frh8jiymqqnsmca5h6vpwp6nkv2i10a5icy8x";
-          #     };
-          #     propagatedBuildInputs = [ ps.spacy ps.sentencepiece ];
-          #   };
-          #   spacy-curated-transformers = ps.buildPythonPackage rec {
-          #     pname = "spacy-curated-transformers";
-          #     version = "0.2.2";
-          #     src = fetchTarball {
-          #       url = "https://github.com/explosion/${pname}/archive/refs/tags/v${version}.tar.gz";
-          #       sha256 = "sha256:0gp3g9jjylz1h937bjp3ldf82ypv7r4wd4kk1mkvpw0h9smhgsa9";
-          #     };
-          #     propagatedBuildInputs = [ ps.spacy ps.pytorch ps.pip curated-tokenizers ];
-          #   };
-          #   spacy-en-core-web-trf = ps.buildPythonPackage rec {
-          #     pname = "en_core_web_trf";
-          #     version = "3.7.1";
-          #     src = fetchTarball {
-          #       url =
-          #         "https://github.com/explosion/spacy-models/releases/download/${pname}-${version}/${pname}-${version}.tar.gz";
-          #       sha256 = "sha256:1mgp4v8rg9rgzak19d7c0aa9xxia379w18ky1hq470is9kjpwphr";
-          #     };
-          #     propagatedBuildInputs = [ ps.spacy spacy-curated-transformers ];
-          #   };
         in
         {
           # This sets `pkgs` to a nixpkgs with allowUnfree option set.
@@ -187,7 +110,7 @@
                 scalene
                 ps.setuptools
                 ps.tqdm
-                spacy
+                ps.spacy
                 spacy-en-core-web-sm
               ])).override
                 (args: { ignoreCollisions = true; }); # old cython and new cython_3 collide
