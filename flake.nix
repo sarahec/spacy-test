@@ -55,22 +55,15 @@
           };
           scalene = ps.buildPythonPackage rec {
             pname = "scalene";
-            version = "1.5.35";
+            version = "1.5.36";
             pyproject = true;
             src = ps.fetchPypi {
               inherit pname version;
-              sha256 = "3s0KN06RivCN4G5/LZf+r7GtAlKwqRuZwUtrY2T2Bew=";
+              sha256 = "sha256-yKRXbSyywb71ma39JeD5DJgdUKwnJDyi1hZA+im9S8Y=";
             };
 
             nativeBuildInputs = [ ps.cython ps.setuptools-scm ps.pip ps.wheel ];
             propagatedBuildInputs = [ ps.cython ps.setuptools ps.wheel ps.rich ps.cloudpickle ps.pynvml ps.jinja2 ps.psutil ];
-
-            postPatch = ''
-              substituteInPlace setup.py \
-                --replace-warn "pynvml>=11.0.0,<11.5" "pynvml~=11.5.0"
-              substituteInPlace requirements.txt \
-                --replace-warn "pynvml~=11.0.0" "pynvml~=11.5.0"
-            '';
           };
         in
         {
