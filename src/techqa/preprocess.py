@@ -1,3 +1,4 @@
+from statistics import fmean, median, mode, pstdev
 import jsonlines
 import typer
 from tqdm import tqdm
@@ -15,31 +16,29 @@ def load_corpus(docbin_path: Path, language: Language) -> Iterable[Doc]:
         yield doc
 
 
-def tokenize_corpus(input_path: Path, language: Language, output_path: Optional[Path], batch=1024, processes=2):
+def tokenize_corpus(input_path: Path, language: Language, output_path: Optional[Path], batch=1024, processes=1):
+    line_sizes = []
     nlp = spacy.blank("en", vocab=language.vocab)
-    doc_bin = DocBin(store_user_data=True)
     with jsonlines.open(input_path) as reader:
         # json_docs = list(reader)
         docs = nlp.pipe([(eg["text"], {"id": eg["id"], "title": eg["title"], "metadata": eg["metadata"], "length": len(eg["text"])}) for eg in reader],
                         batch_size=batch, n_process=processes, as_tuples=True)
+    return process_docs(output_path, line_sizes, docs)
+
+
+def process_docs(output_path, line_sizes, docs):
     if output_path is not None:
         doc_bin = DocBin(store_user_data=True)
         for doc, user_data in docs:
             doc.user_data = user_data
+            line_sizes.append(user_data["length"])
             doc_bin.add(doc)
         doc_bin.to_disk(output_path)
     else:
-        lines = 0
-        total_length = 0
         for doc, user_data in docs:
             doc.user_data = user_data
-            lines += 1
-            total_length += user_data["length"]
-        print(
-            f"Processed {lines} documents with an average length of {total_length / lines} characters")
-
-
-
+            line_sizes.append(user_data["length"])
+    return line_sizes
 
 
 def main(
@@ -49,10 +48,13 @@ def main(
     batch: Annotated[int, typer.Option(
         help="Batch size for processing")] = 1024,
     processes: Annotated[int, typer.Option(
-        help="Number of processes to use for tokenization")] = 2,
+        help="Number of processes to use for tokenization")] = 1,
 ):
     language = spacy.load("en_core_web_sm")
-    tokenize_corpus(input_path, language, output_path, batch, processes)
+    line_sizes = tokenize_corpus(
+        input_path, language, output_path, batch, processes)
+    print(
+        f"Processed {len(line_sizes)} documents.  Length mode: {mode(line_sizes)}, standard deviation: {pstdev(line_sizes)}")
 
 
 if __name__ == "__main__":
