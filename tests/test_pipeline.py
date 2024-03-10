@@ -15,7 +15,7 @@
  """
 
 import pytest
-from src.techqa.pipeline import read_techqa_corpus, run_pipeline, post_process_docs
+from pipeline import read_techqa_corpus, run_pipeline, post_process_docs
 
 
 @pytest.mark.skip(reason="covered by the pipeline test")
