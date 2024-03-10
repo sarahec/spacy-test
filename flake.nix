@@ -45,17 +45,12 @@
 
           techqa_tools = ps.buildPythonPackage rec {
             pname = "techqa_tools";
-            version = "unstable 3-10-24";
+            version = "0.0.1";
             src = pkgs.fetchgit {
-              url = "https://github.com/sarahec/spacy-test.git";
-              sparseCheckout = [ "src/techqa_tools" ];
-              hash = "";
+              url = "https://github.com/sarahec/techqa_tools.git";
+              hash = "sha256-GWTIeYP4Et+xiKOCjjBf/v+3wlSY8MX1yVEBpNmVjeQ=";
             };
             format = "pyproject";
-
-            prePatch = ''
-              cd src/techqa_tools
-            '';
 
             buildInputs = [
               ps.setuptools
@@ -67,6 +62,7 @@
             nativeBuildInputs = [
               ps.setuptools
               ps.cython_3
+              ps.wheel
             ];
 
             propagatedBuildInputs = [
