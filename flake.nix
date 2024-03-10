@@ -110,32 +110,19 @@
               venv = {
                 enable = true;
                 quiet = true;
-                requirements = ''
-                  austin-dist
-                '';
               };
             };
 
             services.elasticsearch.enable = true;
 
             packages = with pkgs; [
+              gcc
               noti
               scalene
               wget
             ];
 
             scripts = {
-              wikipedia_dl.exec = ''
-                wget https://nlp.stanford.edu/projects/hotpotqa/enwiki-20171001-pages-meta-current-withlinks-processed.tar.bz2
-                wget https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-page_props.sql.gz
-                tar -xvf enwiki-20171001-pages-meta-current-withlinks-processed.tar.bz2
-                mkdir -p $PROJECT_DIR/data/wikipedia/enwiki_whole
-                mv enwiki-20171001-pages-meta-current-withlinks-processed/* $PROJECT_DIR/data/wikipedia/enwiki_whole/
-                gzip -d enwiki-latest-page_props.sql.gz
-                mkdir -p $PROJECT_DIR/data/wikipedia/enwiki_props
-                mv enwiki-latest-page_props.sql $PROJECT_DIR/data/wikipedia/enwiki_props/
-              '';
-
               techqa_dl.exec = ''
                 wget -o $PROJECT_DIR/data/TechQA.tar.gz https://huggingface.co/datasets/PrimeQA/TechQA/resolve/main/TechQA.tar.gz
                 (cd $PROJECT_DIR/data
