@@ -48,13 +48,13 @@
             version = "unstable 3-10-24";
             src = pkgs.fetchgit {
               url = "https://github.com/sarahec/spacy-test.git";
-              sparseCheckout = [ "src/techqa_tools" ];
+              sparseCheckout = [ "lib/techqa_tools" ];
               hash = "sha256-k43LfXmqXiLXmy4o049N1cwHB1eOJRfHdHTCjhFJTDA=";
             };
             format = "pyproject";
 
             prePatch = ''
-              cd src/techqa_tools
+              cd lib/techqa_tools
             '';
 
             buildInputs = [ ps.setuptools ps.wheel ps.cython_3 ];
