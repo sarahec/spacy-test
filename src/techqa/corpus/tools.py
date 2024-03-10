@@ -9,7 +9,7 @@ from spacy import Language
 
 def load_tokenized_corpus(docbin_path: Path, language: Language) -> Iterable[Doc]:
     doc_bin = DocBin().from_disk(docbin_path)
-    yield from doc_bin.get_docs(docbin_path, language.vocab)
+    yield from doc_bin.get_docs(language.vocab)
 
 
 def read_corpus_entries(input_path: Path) -> Iterable[tuple[str, Dict]]:
