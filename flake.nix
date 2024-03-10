@@ -43,6 +43,28 @@
         let
           ps = pkgs.python311Packages;
 
+          techqa_tools = ps.buildPythonPackage rec {
+            pname = "techqa_tools";
+            version = "0.0.1";
+            src = pkgs.fetchgit {
+              url = "https://github.com/sarahec/spacy-test.git";
+              sparseCheckout = [ "src/techqa_tools" ];
+              hash = "sha256-776vLbowCSEWhx/MfFrmJnrKnEWTzlAkRKWsax46CEM=";
+            };
+            format = "pyproject";
+
+            prePatch = ''
+              cd src/techqa_tools
+            '';
+
+            buildInputs = [ ps.setuptools ps.wheel ps.cython_3 ];
+            propagatedBuildInputs = [
+              ps.jsonlines
+              ps.orjson
+              ps.spacy
+            ];
+          };
+
           spacy-en-core-web-sm = ps.buildPythonPackage rec {
             pname = "en_core_web_sm";
             version = "3.7.1";
@@ -94,13 +116,13 @@
               enable = true;
               package = (pkgs.python311.withPackages (ps: [
                 # ps.cupy
+                techqa_tools
                 ps.cython_3
                 ps.ijson
-                ps.jsonlines
-                ps.orjson
                 ps.pip
                 ps.pytest
                 scalene
+                techqa_tools
                 ps.setuptools
                 ps.tqdm
                 ps.spacy
