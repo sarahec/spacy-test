@@ -57,11 +57,19 @@
               cd src/techqa_tools
             '';
 
-            buildInputs = [ ps.setuptools ps.wheel ps.cython_3 ];
-
-            propagatedBuildInputs = [
+            buildInputs = [
+              ps.setuptools
+              ps.wheel
               ps.jsonlines
               ps.orjson
+            ];
+
+            nativeBuildInputs = [
+              ps.setuptools
+              ps.cython_3
+            ];
+
+            propagatedBuildInputs = [
               ps.spacy
             ];
           };

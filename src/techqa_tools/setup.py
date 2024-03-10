@@ -2,5 +2,6 @@ from setuptools import setup
 from Cython.Build import cythonize
 
 setup(
-    ext_modules=cythonize("tools.pyx")
+    name='TechQA tools',
+    ext_modules=cythonize("techqa_tools.pyx"),
 )
