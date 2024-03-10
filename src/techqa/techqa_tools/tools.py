@@ -1,3 +1,5 @@
+# cython: language_level=3
+
 from collections.abc import Callable, Generator
 from pathlib import Path
 from typing import Dict, Iterable, Optional

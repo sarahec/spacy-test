@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from corpus.tools import label_corpus, label_corpus_docbin, read_corpus_entries, read_corpus_segments, save_tokenized_corpus, tokenize_corpus, load_tokenized_corpus
+from techqa_tools import label_corpus, label_corpus_docbin, read_corpus_entries, read_corpus_segments, save_tokenized_corpus, tokenize_corpus, load_tokenized_corpus
 from typing import Annotated, Optional
 import tqdm
 import typer
