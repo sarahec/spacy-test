@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from corpus.tools import label_corpus, read_corpus_entries, read_corpus_segments, save_tokenized_corpus, tokenize_corpus
+from corpus.tools import label_corpus, label_corpus_docbin, read_corpus_entries, read_corpus_segments, save_tokenized_corpus, tokenize_corpus, load_tokenized_corpus
 from typing import Annotated, Optional
 import tqdm
 import typer
@@ -36,9 +36,9 @@ def main(
         help="Number of words per input segment")] = None
 ):
     language = spacy.load("en_core_web_sm")
-    inputs = read_corpus_entries(
-        input_path) if segment_size is None else read_corpus_segments(input_path, segment_size)
-    docs = label_corpus(tqdm.tqdm(inputs), language, batch_size, processes)
+    inputs = load_tokenized_corpus(input_path, language)
+    docs = label_corpus_docbin(
+        tqdm.tqdm(inputs), language, batch_size, processes)
     if output_path is not None:
         save_tokenized_corpus(docs, output_path)
     else:
@@ -46,6 +46,7 @@ def main(
         for doc in docs:
             total_length += len(doc)
         print(f"Total length of corpus: {total_length}")
+
 
 if __name__ == "__main__":
     typer.run(main)
