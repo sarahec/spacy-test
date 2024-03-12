@@ -43,6 +43,27 @@
         let
           ps = pkgs.python311Packages;
 
+          jsonlines = ps.buildPythonPackage rec {
+            pname = "jsonlines";
+            version = "4.0.0";
+            format = "setuptools";
+
+            src = pkgs.fetchFromGitHub {
+              owner = "wbolster";
+              repo = pname;
+              rev = version;
+              hash = "sha256-KNEJdAxEgd0NGPnk9J51C3yUN2e6Cvvevth0iKOMlhE=";
+            };
+
+            propagatedBuildInputs = [
+              ps.attrs
+            ];
+
+            pythonImportsCheck = [
+              "jsonlines"
+            ];
+          };
+
           techqa_tools = ps.buildPythonPackage rec {
             pname = "techqa_tools";
             version = "0.0.2";
@@ -64,7 +85,8 @@
             ];
 
             propagatedBuildInputs = [
-              ps.jsonlines
+              jsonlines
+              ps.orjson
               ps.spacy
             ];
 
@@ -122,9 +144,10 @@
               enable = true;
               package = (pkgs.python311.withPackages (ps: [
                 # ps.cupy
-                techqa_tools
                 ps.cython_3
                 ps.ijson
+                jsonlines
+                ps.orjson
                 ps.pip
                 ps.pytest
                 scalene

@@ -13,7 +13,7 @@ from techqa_tools import tokenize, save_tokenized_corpus
 
 
 def process(language, input_path, output_path, batch_size, processes, segment_size):
-    docs = tqdm(tokenize(language, input_path,
+    docs = tqdm.tqdm(tokenize(language, input_path,
                 batch_size, processes, segment_size))
     if output_path is not None:
         save_tokenized_corpus(docs, output_path)
@@ -24,7 +24,7 @@ def process(language, input_path, output_path, batch_size, processes, segment_si
         print(f"Total length of corpus: {total_length}")
 
 
-def run_benchmarks(language, input_path):
+def run_benchmarks(language, input_path, benchmark_path):
     settings = [
         {"batch_size": 1024, "processes": 1,
             "segment_size": None, "label": "whole doc"},
@@ -41,13 +41,13 @@ def run_benchmarks(language, input_path):
             "segment_size": 512, "label": "segmented"},
     ]
     print(f"Running benchmarks")
-    with open("preprocess.csv", 'w', newline='') as csvfile:
+    with open(benchmark_path, 'w', newline='') as csvfile:
         fieldnames = ['label', 'time', 'processes',
                       'segment_size', 'batch_size']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
 
-        for setting in tqdm(settings):
+        for setting in tqdm.tqdm(settings):
             t0 = time.time()
             process(language, input_path, None,
                     setting["batch_size"], setting["processes"], setting["segment_size"])
@@ -68,11 +68,18 @@ def main(
     segment_size: Annotated[int, typer.Option(
         help="Number of words per input segment")] = None,
     benchmark: Annotated[bool, typer.Option(
-        help="Run a benchmark for different settings")] = False
+        help="Run a benchmark for different settings")] = False,
+    benchmark_path: Annotated[Optional[Path], typer.Option(
+        help="Path to the benchmark output file")] = "benchmarks/tokenize.csv",
+    use_gpu: Annotated[bool, typer.Option(
+        help="Use GPU for processing")] = False,
+
 ):
+    if use_gpu:
+        spacy.prefer_gpu()
     language = spacy.load("en_core_web_sm")
     if benchmark:
-        run_benchmarks(language, input_path)
+        run_benchmarks(language, input_path, benchmark_path)
     else:
         process(language, input_path, output_path,
                 batch_size, processes, segment_size, language)
