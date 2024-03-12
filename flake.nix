@@ -45,18 +45,16 @@
 
           techqa_tools = ps.buildPythonPackage rec {
             pname = "techqa_tools";
-            version = "0.0.1";
+            version = "0.0.2";
             src = pkgs.fetchgit {
               url = "https://github.com/sarahec/techqa_tools.git";
-              hash = "sha256-GWTIeYP4Et+xiKOCjjBf/v+3wlSY8MX1yVEBpNmVjeQ=";
+              hash = "sha256-wfuxDfHgbh04k7CjmMvoqcRStVb9XZ0a+Xbif686RoE=";
             };
             format = "pyproject";
 
             buildInputs = [
               ps.setuptools
               ps.wheel
-              ps.jsonlines
-              ps.orjson
             ];
 
             nativeBuildInputs = [
@@ -66,8 +64,11 @@
             ];
 
             propagatedBuildInputs = [
+              ps.jsonlines
               ps.spacy
             ];
+
+            pythonImportsCheck = "techqa_tools";
           };
 
           spacy-en-core-web-sm = ps.buildPythonPackage rec {
