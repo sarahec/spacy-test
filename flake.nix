@@ -9,10 +9,10 @@
     nix2container.inputs.nixpkgs.follows = "nixpkgs";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
     nixpkgs-python.url = "github:cachix/nixpkgs-python";
-    ml-pkgs = {
-      inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:nixvital/ml-pkgs";
-    };
+    # ml-pkgs = {
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    #   url = "github:nixvital/ml-pkgs";
+    # };
   };
 
   nixConfig = {
@@ -103,18 +103,24 @@
             };
             buildInputs = [ ps.spacy ];
           };
-          scalene = ps.buildPythonPackage rec {
+          ps_scalene = ps.buildPythonPackage rec {
             pname = "scalene";
-            version = "1.5.36";
+            version = "1.5.38";
             pyproject = true;
             src = ps.fetchPypi {
               inherit pname version;
-              sha256 = "sha256-yKRXbSyywb71ma39JeD5DJgdUKwnJDyi1hZA+im9S8Y=";
+              sha256 = "sha256-LR1evkn2m6FNBmJnUUJubesxIPeHG6RDgLFBHDuxe38=";
             };
 
             nativeBuildInputs = [ ps.cython ps.setuptools-scm ps.pip ps.wheel ];
             propagatedBuildInputs = [ ps.cython ps.setuptools ps.wheel ps.rich ps.cloudpickle ps.pynvml ps.jinja2 ps.psutil ];
           };
+          # scalene = ps.buildPythonApplication {
+          #   pname = "scalene";
+          #   version = "1.5.38";
+          #   src = ps_scalene;
+          #   buildInputs = [ ps_scalene ];
+          # };
         in
         {
           # This sets `pkgs` to a nixpkgs with allowUnfree option set.
@@ -124,7 +130,7 @@
             config = {
               allowUnfree = true;
               allowBroken = false;
-              cudaSupport = false;
+              cudaSupport = true;
             };
           };
 
@@ -143,14 +149,14 @@
             languages.python = {
               enable = true;
               package = (pkgs.python311.withPackages (ps: [
-                # ps.cupy
+                ps.cupy
                 ps.cython_3
                 ps.ijson
                 jsonlines
                 ps.orjson
                 ps.pip
                 ps.pytest
-                scalene
+                ps_scalene
                 techqa_tools
                 ps.setuptools
                 ps.tqdm
@@ -164,12 +170,12 @@
               };
             };
 
-            services.elasticsearch.enable = true;
+            # services.elasticsearch.enable = false;
 
             packages = with pkgs; [
               gcc
               noti
-              scalene
+              ps_scalene
               wget
             ];
 
@@ -191,9 +197,8 @@
             # NIX_LD = pkgs.fileContents "${pkgs.stdenv.cc}/nix-support/dynamic-linker";
             # buildInputs = [ pkgs.python311 ];
 
-            enterShell = ''
-              export PROJECT_DIR=$DEVENV_ROOT
-            '';
+            # enterShell = ''
+            # '';
           };
 
         };
